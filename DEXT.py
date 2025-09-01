@@ -4,6 +4,13 @@ import csv
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 from collections import defaultdict
+import platform
+import tkinter.font as tkfont
+try:
+    # For a modern look and feel. Install with: pip install ttkthemes
+    from ttkthemes import ThemedTk
+except ImportError:
+    ThemedTk = tk.Tk  # Fallback to standard Tk if ttkthemes is not installed
 
 # --- Configuration ---
 ARXML_OUTPUT_FILE = 'dext_output.arxml'
@@ -15,9 +22,10 @@ SCHEMA_LOCATION = "http://autosar.org/schema/r4.0 AUTOSAR_00053.xsd"
 class DIDEditorWindow(tk.Toplevel):
     """A Toplevel window for adding or editing a single DID and its signals."""
 
-    def __init__(self, parent, did_data=None, did_name=""):
+    def __init__(self, parent, scale_factor=1.0, did_data=None, did_name=""):
         super().__init__(parent)
         self.parent = parent
+        self.scale_factor = scale_factor
         self.did_data = did_data if did_data else {}
         self.original_did_name = did_name
         self.AUTOSAR_TYPES = [
@@ -34,45 +42,49 @@ class DIDEditorWindow(tk.Toplevel):
             self._populate_data()
 
     def _create_widgets(self):
-        main_frame = ttk.Frame(self, padding="10")
+        scaled_pad = int(10 * self.scale_factor)
+        scaled_pad_small = int(5 * self.scale_factor)
+        scaled_pady_micro = max(1, int(2 * self.scale_factor))
+
+        main_frame = ttk.Frame(self, padding=scaled_pad)
         main_frame.pack(fill=tk.BOTH, expand=True)
 
         # --- DID Properties ---
         did_props_frame = ttk.LabelFrame(main_frame,
                                          text="DID Properties",
-                                         padding="10")
-        did_props_frame.pack(fill=tk.X, pady=(0, 5))
+                                         padding=scaled_pad)
+        did_props_frame.pack(fill=tk.X, pady=(0, scaled_pad_small))
 
         ttk.Label(did_props_frame, text="DID Name:").grid(row=0,
                                                         column=0,
                                                         sticky="w",
-                                                        padx=5,
-                                                        pady=2)
+                                                        padx=scaled_pad_small,
+                                                        pady=scaled_pady_micro)
         self.name_var = tk.StringVar()
         ttk.Entry(did_props_frame, textvariable=self.name_var).grid(row=0,
                                                                   column=1,
                                                                   sticky="ew",
-                                                                  padx=5,
-                                                                  pady=2)
+                                                                  padx=scaled_pad_small,
+                                                                  pady=scaled_pady_micro)
 
         ttk.Label(did_props_frame, text="DID ID (Hex):").grid(row=1,
                                                             column=0,
                                                             sticky="w",
-                                                            padx=5,
-                                                            pady=2)
+                                                            padx=scaled_pad_small,
+                                                            pady=scaled_pady_micro)
         self.id_var = tk.StringVar()
         ttk.Entry(did_props_frame, textvariable=self.id_var).grid(row=1,
                                                                 column=1,
                                                                 sticky="ew",
-                                                                padx=5,
-                                                                pady=2)
+                                                                padx=scaled_pad_small,
+                                                                pady=scaled_pady_micro)
         did_props_frame.columnconfigure(1, weight=1)
 
         # --- Access Rights ---
         access_frame = ttk.LabelFrame(main_frame,
                                       text="Access Rights",
-                                      padding="10")
-        access_frame.pack(fill=tk.X, pady=5)
+                                      padding=scaled_pad)
+        access_frame.pack(fill=tk.X, pady=scaled_pad_small)
         access_frame.columnconfigure(1, weight=1)
 
         # Read Access
@@ -89,20 +101,20 @@ class DIDEditorWindow(tk.Toplevel):
         ttk.Label(access_frame, text="Read Session:").grid(row=1,
                                                            column=0,
                                                            sticky="w",
-                                                           padx=5,
-                                                           pady=2)
+                                                            padx=scaled_pad_small,
+                                                            pady=scaled_pady_micro)
         self.session_var = tk.StringVar()
         self.read_session_combo = ttk.Combobox(
             access_frame,
             textvariable=self.session_var,
             values=["Default Session", "Extended Session", "Programming Session"])
-        self.read_session_combo.grid(row=1, column=1, sticky="ew", padx=5, pady=2)
+        self.read_session_combo.grid(row=1, column=1, sticky="ew", padx=scaled_pad_small, pady=scaled_pady_micro)
 
         ttk.Label(access_frame, text="Read Security:").grid(row=2,
                                                              column=0,
                                                              sticky="w",
-                                                             padx=5,
-                                                             pady=2)
+                                                             padx=scaled_pad_small,
+                                                             pady=scaled_pady_micro)
         self.security_var = tk.StringVar()
         self.read_security_combo = ttk.Combobox(
             access_frame,
@@ -111,15 +123,15 @@ class DIDEditorWindow(tk.Toplevel):
         self.read_security_combo.grid(row=2,
                                        column=1,
                                        sticky="ew",
-                                       padx=5,
-                                       pady=2)
+                                       padx=scaled_pad_small,
+                                       pady=scaled_pady_micro)
 
         # Separator
         ttk.Separator(access_frame, orient='horizontal').grid(row=3,
                                                                column=0,
                                                                columnspan=2,
                                                                sticky='ew',
-                                                               pady=10)
+                                                               pady=scaled_pad)
 
         # Write Access
         self.write_enabled_var = tk.BooleanVar(value=False)
@@ -135,32 +147,32 @@ class DIDEditorWindow(tk.Toplevel):
         ttk.Label(access_frame, text="Write Session:").grid(row=5,
                                                             column=0,
                                                             sticky="w",
-                                                            padx=5,
-                                                            pady=2)
+                                                            padx=scaled_pad_small,
+                                                            pady=scaled_pady_micro)
         self.write_session_var = tk.StringVar()
         self.write_session_combo = ttk.Combobox(
             access_frame,
             textvariable=self.write_session_var,
             values=["Default Session", "Extended Session", "Programming Session"])
-        self.write_session_combo.grid(row=5, column=1, sticky="ew", padx=5, pady=2)
+        self.write_session_combo.grid(row=5, column=1, sticky="ew", padx=scaled_pad_small, pady=scaled_pady_micro)
 
         ttk.Label(access_frame, text="Write Security:").grid(row=6,
                                                              column=0,
                                                              sticky="w",
-                                                             padx=5,
-                                                             pady=2)
+                                                             padx=scaled_pad_small,
+                                                             pady=scaled_pady_micro)
         self.write_security_var = tk.StringVar()
         self.write_security_combo = ttk.Combobox(
             access_frame,
             textvariable=self.write_security_var,
             values=["No Security", "Level 1", "Level 2"])
-        self.write_security_combo.grid(row=6, column=1, sticky="ew", padx=5, pady=2)
+        self.write_security_combo.grid(row=6, column=1, sticky="ew", padx=scaled_pad_small, pady=scaled_pady_micro)
 
         # --- Signals Management ---
         signals_frame = ttk.LabelFrame(main_frame,
                                        text="Signals",
-                                       padding="10")
-        signals_frame.pack(fill=tk.BOTH, expand=True, pady=10)
+                                       padding=scaled_pad)
+        signals_frame.pack(fill=tk.BOTH, expand=True, pady=scaled_pad)
 
         self.signal_columns = ('SignalName', 'DataType', 'Size')
         self.signal_tree = ttk.Treeview(signals_frame,
@@ -168,27 +180,28 @@ class DIDEditorWindow(tk.Toplevel):
                                         show='headings')
         for col in self.signal_columns:
             self.signal_tree.heading(col, text=col)
-            self.signal_tree.column(col, width=100)
+            self.signal_tree.column(col, width=int(100 * self.scale_factor))
         self.signal_tree.pack(fill=tk.BOTH, expand=True)
         self.signal_tree.bind("<Double-1>", self.on_double_click_signal)
 
         signal_btn_frame = ttk.Frame(signals_frame)
-        signal_btn_frame.pack(fill=tk.X, pady=5)
+        signal_btn_frame.pack(fill=tk.X, pady=scaled_pad_small)
         ttk.Button(signal_btn_frame,
                    text="Add Signal",
-                   command=self.add_signal).pack(side=tk.LEFT, padx=2)
+                   command=self.add_signal).pack(side=tk.LEFT, padx=(0, scaled_pad_small))
         ttk.Button(signal_btn_frame,
                    text="Delete Signal",
-                   command=self.delete_signal).pack(side=tk.LEFT, padx=2)
+                   command=self.delete_signal).pack(side=tk.LEFT, padx=scaled_pad_small)
 
         # --- Save/Cancel Buttons ---
         action_frame = ttk.Frame(main_frame)
-        action_frame.pack(fill=tk.X, pady=5)
+        action_frame.pack(fill=tk.X, pady=scaled_pad_small)
         ttk.Button(action_frame,
                    text="Save & Close",
-                   command=self.save_and_close).pack(side=tk.RIGHT)
+                   command=self.save_and_close,
+                   style='Accent.TButton').pack(side=tk.RIGHT)
         ttk.Button(action_frame, text="Cancel",
-                   command=self.destroy).pack(side=tk.RIGHT, padx=10)
+                   command=self.destroy).pack(side=tk.RIGHT, padx=scaled_pad_small)
 
         self._toggle_read_controls()
         self._toggle_write_controls()
@@ -321,7 +334,7 @@ class DIDEditorWindow(tk.Toplevel):
         self.destroy()
 
 
-class DextGeneratorApp(tk.Tk):
+class DextGeneratorApp(ThemedTk):
     """Main GUI application for the DEXT Generator."""
 
     TYPE_SIZE_MAP = {
@@ -333,10 +346,59 @@ class DextGeneratorApp(tk.Tk):
 
     def __init__(self):
         super().__init__()
+        # Set a modern theme. Fallback is handled in the import statement.
+        if ThemedTk != tk.Tk:
+            self.set_theme("arc")
+
+        # --- DPI Scaling ---
+        self.scale_factor = self._get_dpi_scale()
+        self._configure_styles()
+
         self.title("DEXT Generator Tool")
         self.dids_data = {}
         self._create_widgets()
         self._center_window()
+
+    def _get_dpi_scale(self):
+        """Calculates the UI scaling factor based on the system's DPI."""
+        if platform.system() == "Windows":
+            try:
+                # The DPI awareness is set before this class is instantiated.
+                # 96 DPI is the standard, so we get a scaling factor from that.
+                from ctypes import windll
+                return windll.user32.GetDpiForSystem() / 96.0
+            except (ImportError, AttributeError):
+                # This can happen on non-Windows systems or if ctypes fails.
+                return 1.0
+        return 1.0  # Default for other OS
+
+    def _configure_styles(self):
+        """Configures all custom ttk styles, applying DPI scaling."""
+        style = ttk.Style(self)
+
+        # Get base font information
+        default_font = tkfont.nametofont("TkDefaultFont")
+        font_family = default_font.cget("family")
+        font_size = default_font.cget("size")
+
+        # Apply scaling if necessary
+        if self.scale_factor > 1.0:
+            scaled_size = int(font_size * self.scale_factor)
+
+            # Scale the three default fonts of Tkinter
+            default_font.configure(size=scaled_size)
+            tkfont.nametofont("TkTextFont").configure(size=scaled_size)
+            tkfont.nametofont("TkFixedFont").configure(size=scaled_size)
+
+            font_size = scaled_size  # Use the new scaled size for custom styles
+
+        # Configure custom styles using the (potentially scaled) font size
+        bold_font = (font_family, font_size, 'bold')
+
+        style.configure("Treeview.Heading", font=bold_font)
+        style.configure('Accent.TButton', font=bold_font)
+        style.configure('Generate.TButton', font=bold_font,
+                        background='lightgreen')
 
     def _center_window(self):
         self.update_idletasks()
@@ -347,11 +409,14 @@ class DextGeneratorApp(tk.Tk):
         self.geometry(f'{width}x{height}+{x}+{y}')
 
     def _create_widgets(self):
-        main_frame = ttk.Frame(self, padding="10")
+        scaled_pad = int(10 * self.scale_factor)
+        scaled_pad_small = int(5 * self.scale_factor)
+
+        main_frame = ttk.Frame(self, padding=scaled_pad)
         main_frame.pack(fill=tk.BOTH, expand=True)
 
         tree_frame = ttk.Frame(main_frame)
-        tree_frame.pack(pady=10, fill=tk.BOTH, expand=True)
+        tree_frame.pack(pady=scaled_pad, fill=tk.BOTH, expand=True)
 
         self.columns = (
             'DID_Name', 'DID_ID', 'Read_Access', 'Read_Session', 'Read_Security',
@@ -363,58 +428,58 @@ class DextGeneratorApp(tk.Tk):
                                  show='headings')
 
         self.tree.heading('DID_Name', text='DID Name')
-        self.tree.column('DID_Name', width=120, anchor='w')
+        self.tree.column('DID_Name', width=int(120 * self.scale_factor), anchor='w')
         self.tree.heading('DID_ID', text='DID ID')
-        self.tree.column('DID_ID', width=60, anchor='center')
+        self.tree.column('DID_ID', width=int(60 * self.scale_factor), anchor='center')
         self.tree.heading('Read_Access', text='Read')
-        self.tree.column('Read_Access', width=50, anchor='center')
+        self.tree.column('Read_Access', width=int(50 * self.scale_factor), anchor='center')
         self.tree.heading('Read_Session', text='Read Session')
-        self.tree.column('Read_Session', width=120, anchor='w')
+        self.tree.column('Read_Session', width=int(120 * self.scale_factor), anchor='w')
         self.tree.heading('Read_Security', text='Read Security')
-        self.tree.column('Read_Security', width=100, anchor='w')
+        self.tree.column('Read_Security', width=int(100 * self.scale_factor), anchor='w')
         self.tree.heading('Write_Access', text='Write')
-        self.tree.column('Write_Access', width=50, anchor='center')
+        self.tree.column('Write_Access', width=int(50 * self.scale_factor), anchor='center')
         self.tree.heading('Write_Session', text='Write Session')
-        self.tree.column('Write_Session', width=120, anchor='w')
+        self.tree.column('Write_Session', width=int(120 * self.scale_factor), anchor='w')
         self.tree.heading('Write_Security', text='Write Security')
-        self.tree.column('Write_Security', width=100, anchor='w')
+        self.tree.column('Write_Security', width=int(100 * self.scale_factor), anchor='w')
         self.tree.heading('Signal_Count', text='Signals')
-        self.tree.column('Signal_Count', width=60, anchor='center')
+        self.tree.column('Signal_Count', width=int(60 * self.scale_factor), anchor='center')
         self.tree.heading('Total_Size_Bytes', text='Total Size (B)')
-        self.tree.column('Total_Size_Bytes', width=90, anchor='center')
+        self.tree.column('Total_Size_Bytes', width=int(90 * self.scale_factor), anchor='center')
 
         self.tree.pack(fill=tk.BOTH, expand=True)
         self.tree.bind("<Double-1>", lambda e: self.edit_did())
 
-        button_frame = ttk.Frame(main_frame)
-        button_frame.pack(fill=tk.X, pady=5)
+        # --- Action Buttons ---
+        button_groups_frame = ttk.Frame(main_frame)
+        button_groups_frame.pack(fill=tk.X, pady=scaled_pad_small)
 
-        ttk.Button(button_frame, text="Load from CSV",
-                   command=self.load_csv).pack(side=tk.LEFT, padx=5)
-        ttk.Button(button_frame, text="Save to CSV",
-                   command=self.save_csv).pack(side=tk.LEFT, padx=5)
-        ttk.Button(button_frame, text="Add DID",
-                   command=self.add_did).pack(side=tk.LEFT, padx=5)
-        ttk.Button(button_frame,
-                   text="Edit Selected DID",
-                   command=self.edit_did).pack(side=tk.LEFT, padx=5)
-        ttk.Button(button_frame,
-                   text="Delete Selected DID",
-                   command=self.delete_did).pack(side=tk.LEFT, padx=5)
+        # File Operations Group
+        file_ops_frame = ttk.LabelFrame(button_groups_frame, text="File Operations", padding=scaled_pad_small)
+        file_ops_frame.pack(side=tk.LEFT, padx=(0, scaled_pad_small), fill=tk.X, expand=True)
+        ttk.Button(file_ops_frame, text="Load from CSV", command=self.load_csv).pack(side=tk.LEFT, padx=scaled_pad_small, expand=True, fill=tk.X)
+        ttk.Button(file_ops_frame, text="Save to CSV", command=self.save_csv).pack(side=tk.LEFT, padx=scaled_pad_small, expand=True, fill=tk.X)
 
+        # DID Operations Group
+        did_ops_frame = ttk.LabelFrame(button_groups_frame, text="DID Operations", padding=scaled_pad_small)
+        did_ops_frame.pack(side=tk.LEFT, padx=(scaled_pad_small, 0), fill=tk.X, expand=True)
+        ttk.Button(did_ops_frame, text="Add DID", command=self.add_did).pack(side=tk.LEFT, padx=scaled_pad_small, expand=True, fill=tk.X)
+        ttk.Button(did_ops_frame, text="Edit Selected DID", command=self.edit_did).pack(side=tk.LEFT, padx=scaled_pad_small, expand=True, fill=tk.X)
+        ttk.Button(did_ops_frame, text="Delete Selected DID", command=self.delete_did).pack(side=tk.LEFT, padx=scaled_pad_small, expand=True, fill=tk.X)
+
+        # The 'Generate.TButton' style is now configured in the __init__ method
         ttk.Button(main_frame,
                    text="Generate DEXT File",
                    command=self.generate_dext,
-                   style='Accent.TButton').pack(fill=tk.X, pady=10)
+                   style='Generate.TButton').pack(fill=tk.X, pady=scaled_pad)
 
         self.status_var = tk.StringVar(value="Ready")
         ttk.Label(self,
                   textvariable=self.status_var,
                   relief=tk.SUNKEN,
                   anchor='w',
-                  padding=5).pack(side=tk.BOTTOM, fill=tk.X)
-        ttk.Style(self).configure('Accent.TButton',
-                                  font=('Helvetica', 10, 'bold'))
+                  padding=scaled_pad_small).pack(side=tk.BOTTOM, fill=tk.X)
 
     def _refresh_main_treeview(self):
         """Clears and repopulates the main DID list from the internal data structure."""
@@ -555,7 +620,7 @@ class DextGeneratorApp(tk.Tk):
             messagebox.showerror("Error Saving CSV", f"An error occurred: {e}")
 
     def add_did(self):
-        DIDEditorWindow(self)
+        DIDEditorWindow(self, self.scale_factor)
 
     def edit_did(self):
         selected = self.tree.selection()
@@ -564,7 +629,7 @@ class DextGeneratorApp(tk.Tk):
                                    "Please select a DID to edit.")
             return
         did_name = self.tree.item(selected[0], 'values')[0]
-        DIDEditorWindow(self, self.dids_data.get(did_name), did_name)
+        DIDEditorWindow(self, self.scale_factor, self.dids_data.get(did_name), did_name)
 
     def delete_did(self):
         selected = self.tree.selection()
@@ -590,6 +655,32 @@ class DextGeneratorApp(tk.Tk):
         if not self.dids_data:
             messagebox.showerror("Error", "No DID data to generate.")
             return
+
+        # --- Validation for unique DID IDs ---
+        id_to_names = defaultdict(list)
+        for did_name, data in self.dids_data.items():
+            did_id = data.get('id', '').strip()
+            if did_id:
+                # Normalize to handle potential case differences e.g., 'F100' vs 'f100'
+                id_to_names[did_id.lower()].append(did_name)
+
+        duplicates = {
+            id_val: names
+            for id_val, names in id_to_names.items() if len(names) > 1
+        }
+
+        if duplicates:
+            error_message = "Found duplicate DID IDs. Please correct them before generating:\n\n"
+            for did_id_lower, did_names in duplicates.items():
+                # Get the ID with its original casing from the first DID that uses it
+                original_id_casing = self.dids_data[did_names[0]].get('id', did_id_lower)
+                error_message += f"ID '{original_id_casing}' is used by DIDs: {', '.join(did_names)}\n"
+
+            messagebox.showerror("Duplicate DID IDs", error_message)
+            self.status_var.set("Generation failed: Duplicate DID IDs found.")
+            return
+        # --- End Validation ---
+
         self.status_var.set(
             f"Generating DEXT for {len(self.dids_data)} DIDs...")
         self._run_generation_logic(self.dids_data)
@@ -759,5 +850,11 @@ class DextGeneratorApp(tk.Tk):
 
 
 if __name__ == "__main__":
+    try:
+        # Make the application DPI-aware on Windows, resulting in a sharper UI.
+        from ctypes import windll
+        windll.shcore.SetProcessDpiAwareness(1)
+    except (ImportError, AttributeError):
+        pass  # This will fail on non-Windows systems, which is fine.
     app = DextGeneratorApp()
     app.mainloop()
