@@ -324,10 +324,16 @@ class DIDEditorWindow(tk.Toplevel):
 class DextGeneratorApp(tk.Tk):
     """Main GUI application for the DEXT Generator."""
 
+    TYPE_SIZE_MAP = {
+        'uint8': 1, 'sint8': 1, 'boolean': 1,
+        'uint16': 2, 'sint16': 2,
+        'uint32': 4, 'sint32': 4, 'float32': 4,
+        'uint64': 8, 'sint64': 8, 'float64': 8,
+    }
+
     def __init__(self):
         super().__init__()
         self.title("DEXT Generator Tool")
-        self.geometry("800x500")
         self.dids_data = {}
         self._create_widgets()
         self._center_window()
@@ -347,14 +353,36 @@ class DextGeneratorApp(tk.Tk):
         tree_frame = ttk.Frame(main_frame)
         tree_frame.pack(pady=10, fill=tk.BOTH, expand=True)
 
-        self.columns = ('DID_Name', 'DID_ID', 'Session', 'SecurityLevel',
-                        'SignalCount')
+        self.columns = (
+            'DID_Name', 'DID_ID', 'Read_Access', 'Read_Session', 'Read_Security',
+            'Write_Access', 'Write_Session', 'Write_Security', 'Signal_Count',
+            'Total_Size_Bytes'
+        )
         self.tree = ttk.Treeview(tree_frame,
                                  columns=self.columns,
                                  show='headings')
-        for col in self.columns:
-            self.tree.heading(col, text=col.replace('_', ' '))
-            self.tree.column(col, width=150, anchor='w')
+
+        self.tree.heading('DID_Name', text='DID Name')
+        self.tree.column('DID_Name', width=120, anchor='w')
+        self.tree.heading('DID_ID', text='DID ID')
+        self.tree.column('DID_ID', width=60, anchor='center')
+        self.tree.heading('Read_Access', text='Read')
+        self.tree.column('Read_Access', width=50, anchor='center')
+        self.tree.heading('Read_Session', text='Read Session')
+        self.tree.column('Read_Session', width=120, anchor='w')
+        self.tree.heading('Read_Security', text='Read Security')
+        self.tree.column('Read_Security', width=100, anchor='w')
+        self.tree.heading('Write_Access', text='Write')
+        self.tree.column('Write_Access', width=50, anchor='center')
+        self.tree.heading('Write_Session', text='Write Session')
+        self.tree.column('Write_Session', width=120, anchor='w')
+        self.tree.heading('Write_Security', text='Write Security')
+        self.tree.column('Write_Security', width=100, anchor='w')
+        self.tree.heading('Signal_Count', text='Signals')
+        self.tree.column('Signal_Count', width=60, anchor='center')
+        self.tree.heading('Total_Size_Bytes', text='Total Size (B)')
+        self.tree.column('Total_Size_Bytes', width=90, anchor='center')
+
         self.tree.pack(fill=tk.BOTH, expand=True)
         self.tree.bind("<Double-1>", lambda e: self.edit_did())
 
@@ -363,6 +391,8 @@ class DextGeneratorApp(tk.Tk):
 
         ttk.Button(button_frame, text="Load from CSV",
                    command=self.load_csv).pack(side=tk.LEFT, padx=5)
+        ttk.Button(button_frame, text="Save to CSV",
+                   command=self.save_csv).pack(side=tk.LEFT, padx=5)
         ttk.Button(button_frame, text="Add DID",
                    command=self.add_did).pack(side=tk.LEFT, padx=5)
         ttk.Button(button_frame,
@@ -390,14 +420,49 @@ class DextGeneratorApp(tk.Tk):
         """Clears and repopulates the main DID list from the internal data structure."""
         for i in self.tree.get_children():
             self.tree.delete(i)
+
         for name, data in self.dids_data.items():
-            signal_count = len(data.get("signals", []))
-            self.tree.insert('',
-                             tk.END,
-                             values=[
-                                 name, data['id'], data['session'],
-                                 data['security'], signal_count
-                             ])
+            signals = data.get("signals", [])
+            signal_count = len(signals)
+
+            total_size = 0
+            try:
+                for s in signals:
+                    signal_type = s.get('type', '').lower()
+                    if signal_type == 'string':
+                        # For strings, size is specified in the 'size' field
+                        total_size += int(s.get('size', 0))
+                    else:
+                        # For other types, use the predefined map
+                        total_size += self.TYPE_SIZE_MAP.get(signal_type, 0)
+            except (ValueError, TypeError):
+                total_size = "N/A"
+
+            # For backward compatibility, if read_enabled key doesn't exist, assume True
+            is_read_enabled = data.get("read_enabled")
+            if is_read_enabled is None:
+                is_read_enabled = True  # Default for old data format
+            read_enabled_str = "Yes" if is_read_enabled else "No"
+
+            is_write_enabled = data.get("write_enabled", False)
+            write_enabled_str = "Yes" if is_write_enabled else "No"
+
+            values = [
+                name,
+                data.get('id', 'N/A'),
+                read_enabled_str,
+                data.get('session', 'N/A') if is_read_enabled else "---",
+                data.get('security', 'N/A') if is_read_enabled else "---",
+                write_enabled_str,
+                data.get('write_session',
+                         'N/A') if is_write_enabled else "---",
+                data.get('write_security',
+                         'N/A') if is_write_enabled else "---",
+                signal_count,
+                total_size
+            ]
+            self.tree.insert('', tk.END, values=values)
+
         self.status_var.set(f"Loaded {len(self.dids_data)} DIDs.")
 
     def load_csv(self):
@@ -410,23 +475,84 @@ class DextGeneratorApp(tk.Tk):
             with open(filepath, mode='r', encoding='utf-8') as f:
                 reader = csv.DictReader(f)
                 for row in reader:
-                    did_name = row['DID_Name']
-                    temp_dids_data[did_name]['id'] = row['DID_ID']
-                    temp_dids_data[did_name]['session'] = row['Session']
-                    temp_dids_data[did_name]['security'] = row['SecurityLevel']
-                    temp_dids_data[did_name]['signals'].append({
-                        "name":
-                        row['SignalName'],
-                        "type":
-                        row['DataType'],
-                        "size":
-                        row['Size']
-                    })
+                    did_name = row.get('DID_Name')
+                    if not did_name: continue
+
+                    did_info = temp_dids_data[did_name]
+
+                    # Populate DID-level info only once from the first row for that DID
+                    if 'id' not in did_info:
+                        did_info['id'] = row.get('DID_ID')
+                        # For backward compatibility, default Read_Enabled to True if not in CSV
+                        did_info['read_enabled'] = row.get('Read_Enabled', 'True').lower() in ('true', '1', 'yes')
+                        did_info['session'] = row.get('Session', 'Default Session')
+                        did_info['security'] = row.get('SecurityLevel', 'No Security')
+                        did_info['write_enabled'] = row.get('Write_Enabled', 'False').lower() in ('true', '1', 'yes')
+                        did_info['write_session'] = row.get('Write_Session', 'Extended Session')
+                        did_info['write_security'] = row.get('Write_Security', 'Level 1')
+
+                    # Append signal info for every row that has a signal
+                    if row.get('SignalName'):
+                        did_info['signals'].append({
+                            "name": row['SignalName'],
+                            "type": row.get('DataType', 'uint8'),
+                            "size": row.get('Size', '1')
+                        })
             self.dids_data = dict(temp_dids_data)
             self._refresh_main_treeview()
         except Exception as e:
             messagebox.showerror("Error Loading CSV",
                                  f"An error occurred: {e}")
+
+    def save_csv(self):
+        """Saves the current list of DIDs and their signals to a CSV file."""
+        filepath = filedialog.asksaveasfilename(
+            defaultextension=".csv",
+            filetypes=[("CSV Files", "*.csv"), ("All Files", "*.*")])
+        if not filepath:
+            return
+
+        headers = [
+            'DID_Name', 'DID_ID', 'Read_Enabled', 'Session', 'SecurityLevel',
+            'Write_Enabled', 'Write_Session', 'Write_Security', 'SignalName',
+            'DataType', 'Size'
+        ]
+
+        try:
+            with open(filepath, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.DictWriter(f, fieldnames=headers)
+                writer.writeheader()
+
+                for did_name, did_data in sorted(self.dids_data.items()):
+                    read_enabled = did_data.get("read_enabled")
+                    if read_enabled is None:
+                        read_enabled = True  # Backward compatibility
+
+                    base_row = {
+                        'DID_Name': did_name,
+                        'DID_ID': did_data.get('id', ''),
+                        'Read_Enabled': read_enabled,
+                        'Session': did_data.get('session', 'Default Session'),
+                        'SecurityLevel': did_data.get('security', 'No Security'),
+                        'Write_Enabled': did_data.get('write_enabled', False),
+                        'Write_Session': did_data.get('write_session', 'Extended Session'),
+                        'Write_Security': did_data.get('write_security', 'Level 1'),
+                    }
+
+                    signals = did_data.get('signals', [])
+                    if not signals:
+                        writer.writerow(base_row)
+                    else:
+                        for signal in signals:
+                            row = base_row.copy()
+                            row.update({
+                                'SignalName': signal.get('name', ''),
+                                'DataType': signal.get('type', ''),
+                                'Size': signal.get('size', '')})
+                            writer.writerow(row)
+            self.status_var.set(f"Successfully saved DIDs to {filepath}")
+        except Exception as e:
+            messagebox.showerror("Error Saving CSV", f"An error occurred: {e}")
 
     def add_did(self):
         DIDEditorWindow(self)
