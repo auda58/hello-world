@@ -20,9 +20,12 @@ class DIDEditorWindow(tk.Toplevel):
         self.parent = parent
         self.did_data = did_data if did_data else {}
         self.original_did_name = did_name
+        self.AUTOSAR_TYPES = [
+            'uint8', 'uint16', 'uint32', 'uint64', 'sint8', 'sint16', 'sint32',
+            'sint64', 'boolean', 'float32', 'float64', 'string'
+        ]
 
         self.title("DID Editor")
-        self.geometry("600x450")
         self.transient(parent)
         self.grab_set()
 
@@ -35,64 +38,123 @@ class DIDEditorWindow(tk.Toplevel):
         main_frame.pack(fill=tk.BOTH, expand=True)
 
         # --- DID Properties ---
-        props_frame = ttk.LabelFrame(main_frame,
-                                     text="DID Properties",
-                                     padding="10")
-        props_frame.pack(fill=tk.X)
+        did_props_frame = ttk.LabelFrame(main_frame,
+                                         text="DID Properties",
+                                         padding="10")
+        did_props_frame.pack(fill=tk.X, pady=(0, 5))
 
-        ttk.Label(props_frame, text="DID Name:").grid(row=0,
-                                                      column=0,
-                                                      sticky="w",
-                                                      padx=5,
-                                                      pady=2)
+        ttk.Label(did_props_frame, text="DID Name:").grid(row=0,
+                                                        column=0,
+                                                        sticky="w",
+                                                        padx=5,
+                                                        pady=2)
         self.name_var = tk.StringVar()
-        ttk.Entry(props_frame, textvariable=self.name_var).grid(row=0,
-                                                                column=1,
-                                                                sticky="ew",
-                                                                padx=5,
-                                                                pady=2)
+        ttk.Entry(did_props_frame, textvariable=self.name_var).grid(row=0,
+                                                                  column=1,
+                                                                  sticky="ew",
+                                                                  padx=5,
+                                                                  pady=2)
 
-        ttk.Label(props_frame, text="DID ID (Hex):").grid(row=1,
-                                                          column=0,
-                                                          sticky="w",
-                                                          padx=5,
-                                                          pady=2)
-        self.id_var = tk.StringVar()
-        ttk.Entry(props_frame, textvariable=self.id_var).grid(row=1,
-                                                              column=1,
-                                                              sticky="ew",
-                                                              padx=5,
-                                                              pady=2)
-
-        ttk.Label(props_frame, text="Session:").grid(row=2,
-                                                     column=0,
-                                                     sticky="w",
-                                                     padx=5,
-                                                     pady=2)
-        self.session_var = tk.StringVar()
-        ttk.Combobox(props_frame,
-                     textvariable=self.session_var,
-                     values=[
-                         "Default Session", "Extended Session",
-                         "Programming Session"
-                     ]).grid(row=2, column=1, sticky="ew", padx=5, pady=2)
-
-        ttk.Label(props_frame, text="Security Level:").grid(row=3,
+        ttk.Label(did_props_frame, text="DID ID (Hex):").grid(row=1,
                                                             column=0,
                                                             sticky="w",
                                                             padx=5,
                                                             pady=2)
-        self.security_var = tk.StringVar()
-        ttk.Combobox(props_frame,
-                     textvariable=self.security_var,
-                     values=["No Security", "Level 1",
-                             "Level 2"]).grid(row=3,
-                                              column=1,
-                                              sticky="ew",
-                                              padx=5,
-                                              pady=2)
+        self.id_var = tk.StringVar()
+        ttk.Entry(did_props_frame, textvariable=self.id_var).grid(row=1,
+                                                                column=1,
+                                                                sticky="ew",
+                                                                padx=5,
+                                                                pady=2)
+        did_props_frame.columnconfigure(1, weight=1)
 
-        props_frame.columnconfigure(1, weight=1)
+        # --- Access Rights ---
+        access_frame = ttk.LabelFrame(main_frame,
+                                      text="Access Rights",
+                                      padding="10")
+        access_frame.pack(fill=tk.X, pady=5)
+        access_frame.columnconfigure(1, weight=1)
+
+        # Read Access
+        self.read_enabled_var = tk.BooleanVar(value=False)
+        ttk.Checkbutton(
+            access_frame,
+            text="Enable Read Access",
+            variable=self.read_enabled_var,
+            command=self._toggle_read_controls).grid(row=0,
+                                                      column=0,
+                                                      columnspan=2,
+                                                      sticky="w")
+
+        ttk.Label(access_frame, text="Read Session:").grid(row=1,
+                                                           column=0,
+                                                           sticky="w",
+                                                           padx=5,
+                                                           pady=2)
+        self.session_var = tk.StringVar()
+        self.read_session_combo = ttk.Combobox(
+            access_frame,
+            textvariable=self.session_var,
+            values=["Default Session", "Extended Session", "Programming Session"])
+        self.read_session_combo.grid(row=1, column=1, sticky="ew", padx=5, pady=2)
+
+        ttk.Label(access_frame, text="Read Security:").grid(row=2,
+                                                             column=0,
+                                                             sticky="w",
+                                                             padx=5,
+                                                             pady=2)
+        self.security_var = tk.StringVar()
+        self.read_security_combo = ttk.Combobox(
+            access_frame,
+            textvariable=self.security_var,
+            values=["No Security", "Level 1", "Level 2"])
+        self.read_security_combo.grid(row=2,
+                                       column=1,
+                                       sticky="ew",
+                                       padx=5,
+                                       pady=2)
+
+        # Separator
+        ttk.Separator(access_frame, orient='horizontal').grid(row=3,
+                                                               column=0,
+                                                               columnspan=2,
+                                                               sticky='ew',
+                                                               pady=10)
+
+        # Write Access
+        self.write_enabled_var = tk.BooleanVar(value=False)
+        ttk.Checkbutton(
+            access_frame,
+            text="Enable Write Access",
+            variable=self.write_enabled_var,
+            command=self._toggle_write_controls).grid(row=4,
+                                                      column=0,
+                                                      columnspan=2,
+                                                      sticky="w")
+
+        ttk.Label(access_frame, text="Write Session:").grid(row=5,
+                                                            column=0,
+                                                            sticky="w",
+                                                            padx=5,
+                                                            pady=2)
+        self.write_session_var = tk.StringVar()
+        self.write_session_combo = ttk.Combobox(
+            access_frame,
+            textvariable=self.write_session_var,
+            values=["Default Session", "Extended Session", "Programming Session"])
+        self.write_session_combo.grid(row=5, column=1, sticky="ew", padx=5, pady=2)
+
+        ttk.Label(access_frame, text="Write Security:").grid(row=6,
+                                                             column=0,
+                                                             sticky="w",
+                                                             padx=5,
+                                                             pady=2)
+        self.write_security_var = tk.StringVar()
+        self.write_security_combo = ttk.Combobox(
+            access_frame,
+            textvariable=self.write_security_var,
+            values=["No Security", "Level 1", "Level 2"])
+        self.write_security_combo.grid(row=6, column=1, sticky="ew", padx=5, pady=2)
 
         # --- Signals Management ---
         signals_frame = ttk.LabelFrame(main_frame,
@@ -128,18 +190,42 @@ class DIDEditorWindow(tk.Toplevel):
         ttk.Button(action_frame, text="Cancel",
                    command=self.destroy).pack(side=tk.RIGHT, padx=10)
 
+        self._toggle_read_controls()
+        self._toggle_write_controls()
+
     def _populate_data(self):
         """Fills the editor fields with existing DID data."""
         self.name_var.set(self.original_did_name)
         self.id_var.set(self.did_data.get("id", ""))
+        self.read_enabled_var.set(self.did_data.get("read_enabled", True))
         self.session_var.set(self.did_data.get("session", "Default Session"))
         self.security_var.set(self.did_data.get("security", "No Security"))
+        self.write_enabled_var.set(self.did_data.get("write_enabled", False))
+        self.write_session_var.set(
+            self.did_data.get("write_session", "Extended Session"))
+        self.write_security_var.set(
+            self.did_data.get("write_security", "Level 1"))
 
         for signal in self.did_data.get("signals", []):
             self.signal_tree.insert(
                 '',
                 tk.END,
                 values=[signal['name'], signal['type'], signal['size']])
+
+        self._toggle_read_controls()
+        self._toggle_write_controls()
+
+    def _toggle_read_controls(self):
+        """Enable or disable read access controls based on the checkbox state."""
+        state = tk.NORMAL if self.read_enabled_var.get() else tk.DISABLED
+        self.read_session_combo.config(state=state)
+        self.read_security_combo.config(state=state)
+
+    def _toggle_write_controls(self):
+        """Enable or disable write access controls based on the checkbox state."""
+        state = tk.NORMAL if self.write_enabled_var.get() else tk.DISABLED
+        self.write_session_combo.config(state=state)
+        self.write_security_combo.config(state=state)
 
     def add_signal(self):
         self.signal_tree.insert('', tk.END, values=['NewSignal', 'uint8', '1'])
@@ -159,29 +245,32 @@ class DIDEditorWindow(tk.Toplevel):
         if not selected_iid: return
 
         x, y, width, height = self.signal_tree.bbox(selected_iid, column_id)
-        # Adjust placement relative to the Toplevel window
-        editor_x = self.winfo_x()
-        editor_y = self.winfo_y()
-        tree_x = signals_frame.winfo_x()
-        tree_y = signals_frame.winfo_y()
 
-        entry_var = tk.StringVar(
-            value=self.signal_tree.item(selected_iid, 'values')[column_idx])
-        entry = ttk.Entry(self, textvariable=entry_var)
-        entry.place(x=x + tree_x + 10,
-                    y=y + tree_y + 35,
-                    width=width,
-                    height=height)
-        entry.focus_set()
+        current_value = self.signal_tree.item(selected_iid, 'values')[column_idx]
+        editor_var = tk.StringVar(value=current_value)
+
+        column_name = self.signal_columns[column_idx]
+        if column_name == 'DataType':
+            editor = ttk.Combobox(self.signal_tree,
+                                  textvariable=editor_var,
+                                  values=self.AUTOSAR_TYPES)
+        else:
+            editor = ttk.Entry(self.signal_tree, textvariable=editor_var)
+
+        editor.place(x=x, y=y, width=width, height=height)
+        editor.focus_set()
 
         def save_edit(event):
+            """Saves the new value and destroys the editor widget."""
             new_values = list(self.signal_tree.item(selected_iid, 'values'))
-            new_values[column_idx] = entry_var.get()
+            new_values[column_idx] = editor_var.get()
             self.signal_tree.item(selected_iid, values=new_values)
-            entry.destroy()
+            editor.destroy()
 
-        entry.bind("<Return>", save_edit)
-        entry.bind("<FocusOut>", save_edit)
+        editor.bind("<Return>", save_edit)
+        editor.bind("<FocusOut>", save_edit)
+        if isinstance(editor, ttk.Combobox):
+            editor.bind("<<ComboboxSelected>>", save_edit)
 
     def save_and_close(self):
         """Validates input and passes the data back to the main application."""
@@ -200,6 +289,13 @@ class DIDEditorWindow(tk.Toplevel):
                                  parent=self)
             return
 
+        if not self.read_enabled_var.get() and not self.write_enabled_var.get():
+            if not messagebox.askyesno(
+                    "Warning",
+                    "Neither Read nor Write access is enabled. The DID will be defined but not accessible. Continue?",
+                    parent=self):
+                return
+
         signals = []
         for child_id in self.signal_tree.get_children():
             values = self.signal_tree.item(child_id, 'values')
@@ -211,8 +307,12 @@ class DIDEditorWindow(tk.Toplevel):
 
         updated_did = {
             "id": did_id,
+            "read_enabled": self.read_enabled_var.get(),
             "session": self.session_var.get(),
             "security": self.security_var.get(),
+            "write_enabled": self.write_enabled_var.get(),
+            "write_session": self.write_session_var.get(),
+            "write_security": self.write_security_var.get(),
             "signals": signals
         }
 
@@ -409,11 +509,15 @@ class DextGeneratorApp(tk.Tk):
 
             for signal in data['signals']:
                 signal_name = signal['name']
-                data_element = ET.SubElement(data_elements_package,
-                                             "DATA-ELEMENT-PROTOTYPE")
-                ET.SubElement(data_element, "SHORT-NAME").text = signal_name
+                # Make short-names unique by prepending DID name to avoid conflicts
+                unique_element_name = f"{did_name}_{signal_name}"
+
+                data_element = ET.SubElement(
+                    data_elements_package, "DATA-ELEMENT-PROTOTYPE")
+                ET.SubElement(data_element,
+                              "SHORT-NAME").text = unique_element_name
                 type_name = self._create_implementation_data_type(
-                    data_types_package, signal)
+                    data_types_package, signal, unique_element_name)
                 ET.SubElement(data_element,
                               "TYPE-TREF",
                               DEST="IMPLEMENTATION-DATA-TYPE"
@@ -421,31 +525,54 @@ class DextGeneratorApp(tk.Tk):
                 ET.SubElement(data_element_refs,
                               "DATA-ELEMENT-REF",
                               DEST="DATA-ELEMENT-PROTOTYPE"
-                              ).text = f"/MyECU_DataElements/{signal_name}"
+                              ).text = f"/MyECU_DataElements/{unique_element_name}"
 
-            session = data['session'].replace(" ", "_")
-            security = data['security'].replace(" ", "_")
+            # --- Create Read Access Permission ---
+            if data.get("read_enabled", True):  # Default to True for backward compatibility
+                session = data['session'].replace(" ", "_")
+                security = data['security'].replace(" ", "_")
 
-            access_perm = ET.SubElement(access_perms_package,
-                                        "DIAGNOSTIC-ACCESS-PERMISSION")
-            ET.SubElement(access_perm,
-                          "SHORT-NAME").text = f"{did_name}_Read_Access"
-            ET.SubElement(
-                access_perm, "SERVICE-REF", DEST="DIAGNOSTIC-SERVICE-CLASS"
-            ).text = "/AUTOSAR_Dcm/DiagnosticServices/ReadDataByIdentifier"
-            ET.SubElement(ET.SubElement(access_perm,
-                                        "DIAG-DATA-IDENTIFIER-REFS"),
-                          "DIAG-DATA-IDENTIFIER-REF",
-                          DEST="DIAGNOSTIC-DATA-IDENTIFIER"
-                          ).text = f"/MyECU_DiagnosticExtract/{did_name}"
-            ET.SubElement(ET.SubElement(access_perm, "SESSIONS"),
-                          "SESSION-REF",
-                          DEST="DIAGNOSTIC-SESSION-CONTROL"
-                          ).text = f"/MyECU_AccessPermissions/{session}"
-            ET.SubElement(ET.SubElement(access_perm, "SECURITY-LEVELS"),
-                          "SECURITY-LEVEL-REF",
-                          DEST="DIAGNOSTIC-SECURITY-LEVEL"
-                          ).text = f"/MyECU_AccessPermissions/{security}"
+                read_access_perm = ET.SubElement(access_perms_package,
+                                                 "DIAGNOSTIC-ACCESS-PERMISSION")
+                ET.SubElement(read_access_perm,
+                              "SHORT-NAME").text = f"{did_name}_Read_Access"
+                ET.SubElement(
+                    read_access_perm, "SERVICE-REF", DEST="DIAGNOSTIC-SERVICE-CLASS"
+                ).text = "/AUTOSAR_Dcm/DiagnosticServices/ReadDataByIdentifier"
+                ET.SubElement(ET.SubElement(read_access_perm,
+                                            "DIAG-DATA-IDENTIFIER-REFS"),
+                              "DIAG-DATA-IDENTIFIER-REF",
+                              DEST="DIAGNOSTIC-DATA-IDENTIFIER"
+                              ).text = f"/MyECU_DiagnosticExtract/{did_name}"
+                ET.SubElement(ET.SubElement(read_access_perm, "SESSIONS"),
+                              "SESSION-REF",
+                              DEST="DIAGNOSTIC-SESSION-CONTROL"
+                              ).text = f"/MyECU_AccessPermissions/{session}"
+                ET.SubElement(ET.SubElement(read_access_perm, "SECURITY-LEVELS"),
+                              "SECURITY-LEVEL-REF",
+                              DEST="DIAGNOSTIC-SECURITY-LEVEL"
+                              ).text = f"/MyECU_AccessPermissions/{security}"
+
+            # --- Create Write Access Permission (if enabled) ---
+            if data.get("write_enabled"):
+                write_session = data.get("write_session", "Default Session").replace(" ", "_")
+                write_security = data.get("write_security", "No Security").replace(" ", "_")
+
+                write_access_perm = ET.SubElement(
+                    access_perms_package, "DIAGNOSTIC-ACCESS-PERMISSION")
+                ET.SubElement(
+                    write_access_perm, "SHORT-NAME").text = f"{did_name}_Write_Access"
+                ET.SubElement(write_access_perm, "SERVICE-REF",
+                              DEST="DIAGNOSTIC-SERVICE-CLASS").text = "/AUTOSAR_Dcm/DiagnosticServices/WriteDataByIdentifier"
+                ET.SubElement(ET.SubElement(write_access_perm, "DIAG-DATA-IDENTIFIER-REFS"),
+                              "DIAG-DATA-IDENTIFIER-REF",
+                              DEST="DIAGNOSTIC-DATA-IDENTIFIER").text = f"/MyECU_DiagnosticExtract/{did_name}"
+                ET.SubElement(ET.SubElement(write_access_perm, "SESSIONS"),
+                              "SESSION-REF",
+                              DEST="DIAGNOSTIC-SESSION-CONTROL").text = f"/MyECU_AccessPermissions/{write_session}"
+                ET.SubElement(ET.SubElement(write_access_perm, "SECURITY-LEVELS"),
+                              "SECURITY-LEVEL-REF",
+                              DEST="DIAGNOSTIC-SECURITY-LEVEL").text = f"/MyECU_AccessPermissions/{write_security}"
 
         try:
             xml_str = ET.tostring(root, 'utf-8')
@@ -466,10 +593,11 @@ class DextGeneratorApp(tk.Tk):
         ET.SubElement(ar_package, "SHORT-NAME").text = short_name
         return ET.SubElement(ar_package, "ELEMENTS")
 
-    def _create_implementation_data_type(self, parent, signal_info):
+    def _create_implementation_data_type(self, parent, signal_info,
+                                         unique_prefix):
         data_type = signal_info['type']
         size = signal_info['size']
-        short_name = f"{signal_info['name']}_Type"
+        short_name = f"{unique_prefix}_Type"
 
         if data_type.lower() == 'string':
             impl_data_type = ET.SubElement(parent, "IMPLEMENTATION-DATA-TYPE")
@@ -478,8 +606,8 @@ class DextGeneratorApp(tk.Tk):
             sub_elements = ET.SubElement(impl_data_type, "SUB-ELEMENTS")
             element = ET.SubElement(sub_elements,
                                     "IMPLEMENTATION-DATA-TYPE-ELEMENT")
-            ET.SubElement(element,
-                          "SHORT-NAME").text = f"{signal_info['name']}_Byte"
+            ET.SubElement(
+                element, "SHORT-NAME").text = f"{unique_prefix}_Byte"
             ET.SubElement(element, "CATEGORY").text = "TYPE_REFERENCE"
             ET.SubElement(element, "ARRAY-SIZE").text = str(size)
             props = ET.SubElement(element, "SW-DATA-DEF-PROPS")
