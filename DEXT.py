@@ -9,7 +9,7 @@ from collections import defaultdict
 ARXML_OUTPUT_FILE = 'dext_output.arxml'
 AUTOSAR_NAMESPACE = "http://autosar.org/schema/r4.0"
 XSI_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance"
-SCHEMA_LOCATION = "http://autosar.org/schema/r4.0 AUTOSAR_4-3-0.xsd"
+SCHEMA_LOCATION = "http://autosar.org/schema/r4.0 AUTOSAR_00053.xsd"
 
 
 class DIDEditorWindow(tk.Toplevel):
