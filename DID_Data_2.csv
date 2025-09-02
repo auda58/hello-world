@@ -1,0 +1,13 @@
+DID_Name,DID_ID,Read_Enabled,Session,SecurityLevel,Write_Enabled,Write_Session,Write_Security,SignalName,DataType,Size
+did1,100,True,Default Session,No Security,False,,,NewSignal,uint8,1
+did1,100,True,Default Session,No Security,False,,,NewSignal_1,uint8,1
+did1,100,True,Default Session,No Security,False,,,NewSignal_2,uint8,1
+did1,100,True,Default Session,No Security,False,,,NewSignal_3,uint8,1
+did2,200,True,Default Session,Level 1,True,Extended Session,Level 2,NewSignal,uint8,1
+did2,200,True,Default Session,Level 1,True,Extended Session,Level 2,NewSignal_1,uint8,1
+did2,200,True,Default Session,Level 1,True,Extended Session,Level 2,NewSignal_2,uint8,1
+did2,200,True,Default Session,Level 1,True,Extended Session,Level 2,NewSignal_3,uint8,1
+did3,300,False,,,True,Extended Session,Level 2,NewSignal,uint8,1
+did3,300,False,,,True,Extended Session,Level 2,NewSignal_1,uint8,1
+did3,300,False,,,True,Extended Session,Level 2,NewSignal_2,sint16,1
+did3,300,False,,,True,Extended Session,Level 2,NewSignal_3,uint16,1

@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AUTOSAR xmlns:ns0="https://www.w3.org/2001/XMLSchema-instance" ns0:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00052.xsd">
+    <AR-PACKAGES>
+        <AR-PACKAGE>
+            <SHORT-NAME>MyECU_DiagnosticExtract</SHORT-NAME>
+            <ELEMENTS>
+                <DIAGNOSTIC-DATA-IDENTIFIER>
+                    <SHORT-NAME>did1</SHORT-NAME>
+                    <ID>256</ID>
+                    <DATA-ELEMENT-REFS>
+                        <DATA-ELEMENT-REF DEST="DATA-ELEMENT-PROTOTYPE">/MyECU_DataElements/did1_NewSignal</DATA-ELEMENT-REF>
+                        <DATA-ELEMENT-REF DEST="DATA-ELEMENT-PROTOTYPE">/MyECU_DataElements/did1_NewSignal_1</DATA-ELEMENT-REF>
+                        <DATA-ELEMENT-REF DEST="DATA-ELEMENT-PROTOTYPE">/MyECU_DataElements/did1_NewSignal_2</DATA-ELEMENT-REF>
+                        <DATA-ELEMENT-REF DEST="DATA-ELEMENT-PROTOTYPE">/MyECU_DataElements/did1_NewSignal_3</DATA-ELEMENT-REF>
+                    </DATA-ELEMENT-REFS>
+                </DIAGNOSTIC-DATA-IDENTIFIER>
+                <DIAGNOSTIC-DATA-IDENTIFIER>
+                    <SHORT-NAME>did2</SHORT-NAME>
+                    <ID>512</ID>
+                    <DATA-ELEMENT-REFS>
+                        <DATA-ELEMENT-REF DEST="DATA-ELEMENT-PROTOTYPE">/MyECU_DataElements/did2_NewSignal</DATA-ELEMENT-REF>
+                        <DATA-ELEMENT-REF DEST="DATA-ELEMENT-PROTOTYPE">/MyECU_DataElements/did2_NewSignal_1</DATA-ELEMENT-REF>
+                        <DATA-ELEMENT-REF DEST="DATA-ELEMENT-PROTOTYPE">/MyECU_DataElements/did2_NewSignal_2</DATA-ELEMENT-REF>
+                        <DATA-ELEMENT-REF DEST="DATA-ELEMENT-PROTOTYPE">/MyECU_DataElements/did2_NewSignal_3</DATA-ELEMENT-REF>
+                    </DATA-ELEMENT-REFS>
+                </DIAGNOSTIC-DATA-IDENTIFIER>
+                <DIAGNOSTIC-DATA-IDENTIFIER>
+                    <SHORT-NAME>did3</SHORT-NAME>
+                    <ID>768</ID>
+                    <DATA-ELEMENT-REFS>
+                        <DATA-ELEMENT-REF DEST="DATA-ELEMENT-PROTOTYPE">/MyECU_DataElements/did3_NewSignal</DATA-ELEMENT-REF>
+                        <DATA-ELEMENT-REF DEST="DATA-ELEMENT-PROTOTYPE">/MyECU_DataElements/did3_NewSignal_1</DATA-ELEMENT-REF>
+                        <DATA-ELEMENT-REF DEST="DATA-ELEMENT-PROTOTYPE">/MyECU_DataElements/did3_NewSignal_2</DATA-ELEMENT-REF>
+                        <DATA-ELEMENT-REF DEST="DATA-ELEMENT-PROTOTYPE">/MyECU_DataElements/did3_NewSignal_3</DATA-ELEMENT-REF>
+                    </DATA-ELEMENT-REFS>
+                </DIAGNOSTIC-DATA-IDENTIFIER>
+            </ELEMENTS>
+        </AR-PACKAGE>
+        <AR-PACKAGE>
+            <SHORT-NAME>MyECU_DataElements</SHORT-NAME>
+            <ELEMENTS>
+                <DATA-ELEMENT-PROTOTYPE>
+                    <SHORT-NAME>did1_NewSignal</SHORT-NAME>
+                    <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MyECU_DataTypes/did1_NewSignal_Type</TYPE-TREF>
+                </DATA-ELEMENT-PROTOTYPE>
+                <DATA-ELEMENT-PROTOTYPE>
+                    <SHORT-NAME>did1_NewSignal_1</SHORT-NAME>
+                    <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MyECU_DataTypes/did1_NewSignal_1_Type</TYPE-TREF>
+                </DATA-ELEMENT-PROTOTYPE>
+                <DATA-ELEMENT-PROTOTYPE>
+                    <SHORT-NAME>did1_NewSignal_2</SHORT-NAME>
+                    <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MyECU_DataTypes/did1_NewSignal_2_Type</TYPE-TREF>
+                </DATA-ELEMENT-PROTOTYPE>
+                <DATA-ELEMENT-PROTOTYPE>
+                    <SHORT-NAME>did1_NewSignal_3</SHORT-NAME>
+                    <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MyECU_DataTypes/did1_NewSignal_3_Type</TYPE-TREF>
+                </DATA-ELEMENT-PROTOTYPE>
+                <DATA-ELEMENT-PROTOTYPE>
+                    <SHORT-NAME>did2_NewSignal</SHORT-NAME>
+                    <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MyECU_DataTypes/did2_NewSignal_Type</TYPE-TREF>
+                </DATA-ELEMENT-PROTOTYPE>
+                <DATA-ELEMENT-PROTOTYPE>
+                    <SHORT-NAME>did2_NewSignal_1</SHORT-NAME>
+                    <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MyECU_DataTypes/did2_NewSignal_1_Type</TYPE-TREF>
+                </DATA-ELEMENT-PROTOTYPE>
+                <DATA-ELEMENT-PROTOTYPE>
+                    <SHORT-NAME>did2_NewSignal_2</SHORT-NAME>
+                    <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MyECU_DataTypes/did2_NewSignal_2_Type</TYPE-TREF>
+                </DATA-ELEMENT-PROTOTYPE>
+                <DATA-ELEMENT-PROTOTYPE>
+                    <SHORT-NAME>did2_NewSignal_3</SHORT-NAME>
+                    <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MyECU_DataTypes/did2_NewSignal_3_Type</TYPE-TREF>
+                </DATA-ELEMENT-PROTOTYPE>
+                <DATA-ELEMENT-PROTOTYPE>
+                    <SHORT-NAME>did3_NewSignal</SHORT-NAME>
+                    <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MyECU_DataTypes/did3_NewSignal_Type</TYPE-TREF>
+                </DATA-ELEMENT-PROTOTYPE>
+                <DATA-ELEMENT-PROTOTYPE>
+                    <SHORT-NAME>did3_NewSignal_1</SHORT-NAME>
+                    <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MyECU_DataTypes/did3_NewSignal_1_Type</TYPE-TREF>
+                </DATA-ELEMENT-PROTOTYPE>
+                <DATA-ELEMENT-PROTOTYPE>
+                    <SHORT-NAME>did3_NewSignal_2</SHORT-NAME>
+                    <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MyECU_DataTypes/did3_NewSignal_2_Type</TYPE-TREF>
+                </DATA-ELEMENT-PROTOTYPE>
+                <DATA-ELEMENT-PROTOTYPE>
+                    <SHORT-NAME>did3_NewSignal_3</SHORT-NAME>
+                    <TYPE-TREF DEST="IMPLEMENTATION-DATA-TYPE">/MyECU_DataTypes/did3_NewSignal_3_Type</TYPE-TREF>
+                </DATA-ELEMENT-PROTOTYPE>
+            </ELEMENTS>
+        </AR-PACKAGE>
+        <AR-PACKAGE>
+            <SHORT-NAME>MyECU_DataTypes</SHORT-NAME>
+            <ELEMENTS>
+                <IMPLEMENTATION-DATA-TYPE>
+                    <SHORT-NAME>did1_NewSignal_Type</SHORT-NAME>
+                    <CATEGORY>VALUE</CATEGORY>
+                    <SW-DATA-DEF-PROPS>
+                        <SW-DATA-DEF-PROPS-VARIANTS>
+                            <SW-DATA-DEF-PROPS-CONDITIONAL>
+                                <BASE-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/AUTOSAR_Platform/ImplementationDataTypes/uint8</BASE-TYPE-REF>
+                            </SW-DATA-DEF-PROPS-CONDITIONAL>
+                        </SW-DATA-DEF-PROPS-VARIANTS>
+                    </SW-DATA-DEF-PROPS>
+                </IMPLEMENTATION-DATA-TYPE>
+                <IMPLEMENTATION-DATA-TYPE>
+                    <SHORT-NAME>did1_NewSignal_1_Type</SHORT-NAME>
+                    <CATEGORY>VALUE</CATEGORY>
+                    <SW-DATA-DEF-PROPS>
+                        <SW-DATA-DEF-PROPS-VARIANTS>
+                            <SW-DATA-DEF-PROPS-CONDITIONAL>
+                                <BASE-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/AUTOSAR_Platform/ImplementationDataTypes/uint8</BASE-TYPE-REF>
+                            </SW-DATA-DEF-PROPS-CONDITIONAL>
+                        </SW-DATA-DEF-PROPS-VARIANTS>
+                    </SW-DATA-DEF-PROPS>
+                </IMPLEMENTATION-DATA-TYPE>
+                <IMPLEMENTATION-DATA-TYPE>
+                    <SHORT-NAME>did1_NewSignal_2_Type</SHORT-NAME>
+                    <CATEGORY>VALUE</CATEGORY>
+                    <SW-DATA-DEF-PROPS>
+                        <SW-DATA-DEF-PROPS-VARIANTS>
+                            <SW-DATA-DEF-PROPS-CONDITIONAL>
+                                <BASE-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/AUTOSAR_Platform/ImplementationDataTypes/uint8</BASE-TYPE-REF>
+                            </SW-DATA-DEF-PROPS-CONDITIONAL>
+                        </SW-DATA-DEF-PROPS-VARIANTS>
+                    </SW-DATA-DEF-PROPS>
+                </IMPLEMENTATION-DATA-TYPE>
+                <IMPLEMENTATION-DATA-TYPE>
+                    <SHORT-NAME>did1_NewSignal_3_Type</SHORT-NAME>
+                    <CATEGORY>VALUE</CATEGORY>
+                    <SW-DATA-DEF-PROPS>
+                        <SW-DATA-DEF-PROPS-VARIANTS>
+                            <SW-DATA-DEF-PROPS-CONDITIONAL>
+                                <BASE-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/AUTOSAR_Platform/ImplementationDataTypes/uint8</BASE-TYPE-REF>
+                            </SW-DATA-DEF-PROPS-CONDITIONAL>
+                        </SW-DATA-DEF-PROPS-VARIANTS>
+                    </SW-DATA-DEF-PROPS>
+                </IMPLEMENTATION-DATA-TYPE>
+                <IMPLEMENTATION-DATA-TYPE>
+                    <SHORT-NAME>did2_NewSignal_Type</SHORT-NAME>
+                    <CATEGORY>VALUE</CATEGORY>
+                    <SW-DATA-DEF-PROPS>
+                        <SW-DATA-DEF-PROPS-VARIANTS>
+                            <SW-DATA-DEF-PROPS-CONDITIONAL>
+                                <BASE-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/AUTOSAR_Platform/ImplementationDataTypes/uint8</BASE-TYPE-REF>
+                            </SW-DATA-DEF-PROPS-CONDITIONAL>
+                        </SW-DATA-DEF-PROPS-VARIANTS>
+                    </SW-DATA-DEF-PROPS>
+                </IMPLEMENTATION-DATA-TYPE>
+                <IMPLEMENTATION-DATA-TYPE>
+                    <SHORT-NAME>did2_NewSignal_1_Type</SHORT-NAME>
+                    <CATEGORY>VALUE</CATEGORY>
+                    <SW-DATA-DEF-PROPS>
+                        <SW-DATA-DEF-PROPS-VARIANTS>
+                            <SW-DATA-DEF-PROPS-CONDITIONAL>
+                                <BASE-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/AUTOSAR_Platform/ImplementationDataTypes/uint8</BASE-TYPE-REF>
+                            </SW-DATA-DEF-PROPS-CONDITIONAL>
+                        </SW-DATA-DEF-PROPS-VARIANTS>
+                    </SW-DATA-DEF-PROPS>
+                </IMPLEMENTATION-DATA-TYPE>
+                <IMPLEMENTATION-DATA-TYPE>
+                    <SHORT-NAME>did2_NewSignal_2_Type</SHORT-NAME>
+                    <CATEGORY>VALUE</CATEGORY>
+                    <SW-DATA-DEF-PROPS>
+                        <SW-DATA-DEF-PROPS-VARIANTS>
+                            <SW-DATA-DEF-PROPS-CONDITIONAL>
+                                <BASE-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/AUTOSAR_Platform/ImplementationDataTypes/uint8</BASE-TYPE-REF>
+                            </SW-DATA-DEF-PROPS-CONDITIONAL>
+                        </SW-DATA-DEF-PROPS-VARIANTS>
+                    </SW-DATA-DEF-PROPS>
+                </IMPLEMENTATION-DATA-TYPE>
+                <IMPLEMENTATION-DATA-TYPE>
+                    <SHORT-NAME>did2_NewSignal_3_Type</SHORT-NAME>
+                    <CATEGORY>VALUE</CATEGORY>
+                    <SW-DATA-DEF-PROPS>
+                        <SW-DATA-DEF-PROPS-VARIANTS>
+                            <SW-DATA-DEF-PROPS-CONDITIONAL>
+                                <BASE-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/AUTOSAR_Platform/ImplementationDataTypes/uint8</BASE-TYPE-REF>
+                            </SW-DATA-DEF-PROPS-CONDITIONAL>
+                        </SW-DATA-DEF-PROPS-VARIANTS>
+                    </SW-DATA-DEF-PROPS>
+                </IMPLEMENTATION-DATA-TYPE>
+                <IMPLEMENTATION-DATA-TYPE>
+                    <SHORT-NAME>did3_NewSignal_Type</SHORT-NAME>
+                    <CATEGORY>VALUE</CATEGORY>
+                    <SW-DATA-DEF-PROPS>
+                        <SW-DATA-DEF-PROPS-VARIANTS>
+                            <SW-DATA-DEF-PROPS-CONDITIONAL>
+                                <BASE-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/AUTOSAR_Platform/ImplementationDataTypes/uint8</BASE-TYPE-REF>
+                            </SW-DATA-DEF-PROPS-CONDITIONAL>
+                        </SW-DATA-DEF-PROPS-VARIANTS>
+                    </SW-DATA-DEF-PROPS>
+                </IMPLEMENTATION-DATA-TYPE>
+                <IMPLEMENTATION-DATA-TYPE>
+                    <SHORT-NAME>did3_NewSignal_1_Type</SHORT-NAME>
+                    <CATEGORY>VALUE</CATEGORY>
+                    <SW-DATA-DEF-PROPS>
+                        <SW-DATA-DEF-PROPS-VARIANTS>
+                            <SW-DATA-DEF-PROPS-CONDITIONAL>
+                                <BASE-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/AUTOSAR_Platform/ImplementationDataTypes/uint8</BASE-TYPE-REF>
+                            </SW-DATA-DEF-PROPS-CONDITIONAL>
+                        </SW-DATA-DEF-PROPS-VARIANTS>
+                    </SW-DATA-DEF-PROPS>
+                </IMPLEMENTATION-DATA-TYPE>
+                <IMPLEMENTATION-DATA-TYPE>
+                    <SHORT-NAME>did3_NewSignal_2_Type</SHORT-NAME>
+                    <CATEGORY>VALUE</CATEGORY>
+                    <SW-DATA-DEF-PROPS>
+                        <SW-DATA-DEF-PROPS-VARIANTS>
+                            <SW-DATA-DEF-PROPS-CONDITIONAL>
+                                <BASE-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/AUTOSAR_Platform/ImplementationDataTypes/sint16</BASE-TYPE-REF>
+                            </SW-DATA-DEF-PROPS-CONDITIONAL>
+                        </SW-DATA-DEF-PROPS-VARIANTS>
+                    </SW-DATA-DEF-PROPS>
+                </IMPLEMENTATION-DATA-TYPE>
+                <IMPLEMENTATION-DATA-TYPE>
+                    <SHORT-NAME>did3_NewSignal_3_Type</SHORT-NAME>
+                    <CATEGORY>VALUE</CATEGORY>
+                    <SW-DATA-DEF-PROPS>
+                        <SW-DATA-DEF-PROPS-VARIANTS>
+                            <SW-DATA-DEF-PROPS-CONDITIONAL>
+                                <BASE-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/AUTOSAR_Platform/ImplementationDataTypes/uint16</BASE-TYPE-REF>
+                            </SW-DATA-DEF-PROPS-CONDITIONAL>
+                        </SW-DATA-DEF-PROPS-VARIANTS>
+                    </SW-DATA-DEF-PROPS>
+                </IMPLEMENTATION-DATA-TYPE>
+            </ELEMENTS>
+        </AR-PACKAGE>
+        <AR-PACKAGE>
+            <SHORT-NAME>MyECU_AccessPermissions</SHORT-NAME>
+            <ELEMENTS>
+                <DIAGNOSTIC-SESSION-CONTROL SHORT-NAME="Default_Session"/>
+                <DIAGNOSTIC-SESSION-CONTROL SHORT-NAME="Extended_Session"/>
+                <DIAGNOSTIC-SESSION-CONTROL SHORT-NAME="Programming_Session"/>
+                <DIAGNOSTIC-SECURITY-LEVEL SHORT-NAME="No_Security"/>
+                <DIAGNOSTIC-SECURITY-LEVEL SHORT-NAME="Level_1"/>
+                <DIAGNOSTIC-SECURITY-LEVEL SHORT-NAME="Level_2"/>
+                <DIAGNOSTIC-ACCESS-PERMISSION>
+                    <SHORT-NAME>did1_Read_Access</SHORT-NAME>
+                    <SERVICE-REF DEST="DIAGNOSTIC-SERVICE-CLASS">/AUTOSAR_Dcm/DiagnosticServices/ReadDataByIdentifier</SERVICE-REF>
+                    <DIAG-DATA-IDENTIFIER-REFS>
+                        <DIAG-DATA-IDENTIFIER-REF DEST="DIAGNOSTIC-DATA-IDENTIFIER">/MyECU_DiagnosticExtract/did1</DIAG-DATA-IDENTIFIER-REF>
+                    </DIAG-DATA-IDENTIFIER-REFS>
+                    <SESSIONS>
+                        <SESSION-REF DEST="DIAGNOSTIC-SESSION-CONTROL">/MyECU_AccessPermissions/Default_Session</SESSION-REF>
+                    </SESSIONS>
+                    <SECURITY-LEVELS>
+                        <SECURITY-LEVEL-REF DEST="DIAGNOSTIC-SECURITY-LEVEL">/MyECU_AccessPermissions/No_Security</SECURITY-LEVEL-REF>
+                    </SECURITY-LEVELS>
+                </DIAGNOSTIC-ACCESS-PERMISSION>
+                <DIAGNOSTIC-ACCESS-PERMISSION>
+                    <SHORT-NAME>did2_Read_Access</SHORT-NAME>
+                    <SERVICE-REF DEST="DIAGNOSTIC-SERVICE-CLASS">/AUTOSAR_Dcm/DiagnosticServices/ReadDataByIdentifier</SERVICE-REF>
+                    <DIAG-DATA-IDENTIFIER-REFS>
+                        <DIAG-DATA-IDENTIFIER-REF DEST="DIAGNOSTIC-DATA-IDENTIFIER">/MyECU_DiagnosticExtract/did2</DIAG-DATA-IDENTIFIER-REF>
+                    </DIAG-DATA-IDENTIFIER-REFS>
+                    <SESSIONS>
+                        <SESSION-REF DEST="DIAGNOSTIC-SESSION-CONTROL">/MyECU_AccessPermissions/Default_Session</SESSION-REF>
+                    </SESSIONS>
+                    <SECURITY-LEVELS>
+                        <SECURITY-LEVEL-REF DEST="DIAGNOSTIC-SECURITY-LEVEL">/MyECU_AccessPermissions/Level_1</SECURITY-LEVEL-REF>
+                    </SECURITY-LEVELS>
+                </DIAGNOSTIC-ACCESS-PERMISSION>
+                <DIAGNOSTIC-ACCESS-PERMISSION>
+                    <SHORT-NAME>did2_Write_Access</SHORT-NAME>
+                    <SERVICE-REF DEST="DIAGNOSTIC-SERVICE-CLASS">/AUTOSAR_Dcm/DiagnosticServices/WriteDataByIdentifier</SERVICE-REF>
+                    <DIAG-DATA-IDENTIFIER-REFS>
+                        <DIAG-DATA-IDENTIFIER-REF DEST="DIAGNOSTIC-DATA-IDENTIFIER">/MyECU_DiagnosticExtract/did2</DIAG-DATA-IDENTIFIER-REF>
+                    </DIAG-DATA-IDENTIFIER-REFS>
+                    <SESSIONS>
+                        <SESSION-REF DEST="DIAGNOSTIC-SESSION-CONTROL">/MyECU_AccessPermissions/Extended_Session</SESSION-REF>
+                    </SESSIONS>
+                    <SECURITY-LEVELS>
+                        <SECURITY-LEVEL-REF DEST="DIAGNOSTIC-SECURITY-LEVEL">/MyECU_AccessPermissions/Level_2</SECURITY-LEVEL-REF>
+                    </SECURITY-LEVELS>
+                </DIAGNOSTIC-ACCESS-PERMISSION>
+                <DIAGNOSTIC-ACCESS-PERMISSION>
+                    <SHORT-NAME>did3_Write_Access</SHORT-NAME>
+                    <SERVICE-REF DEST="DIAGNOSTIC-SERVICE-CLASS">/AUTOSAR_Dcm/DiagnosticServices/WriteDataByIdentifier</SERVICE-REF>
+                    <DIAG-DATA-IDENTIFIER-REFS>
+                        <DIAG-DATA-IDENTIFIER-REF DEST="DIAGNOSTIC-DATA-IDENTIFIER">/MyECU_DiagnosticExtract/did3</DIAG-DATA-IDENTIFIER-REF>
+                    </DIAG-DATA-IDENTIFIER-REFS>
+                    <SESSIONS>
+                        <SESSION-REF DEST="DIAGNOSTIC-SESSION-CONTROL">/MyECU_AccessPermissions/Extended_Session</SESSION-REF>
+                    </SESSIONS>
+                    <SECURITY-LEVELS>
+                        <SECURITY-LEVEL-REF DEST="DIAGNOSTIC-SECURITY-LEVEL">/MyECU_AccessPermissions/Level_2</SECURITY-LEVEL-REF>
+                    </SECURITY-LEVELS>
+                </DIAGNOSTIC-ACCESS-PERMISSION>
+            </ELEMENTS>
+        </AR-PACKAGE>
+    </AR-PACKAGES>
+</AUTOSAR>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+    <!-- 
+      This rule tells the validator: 
+      When you see the schema URL "http://autosar.org/schema/r4.0 AUTOSAR_4-3-0.xsd",
+      find the actual file at the local path "./schema/AUTOSAR_4-3-0.xsd" 
+      instead of going to the web.
+    -->
+    <system 
+        systemId="http://autosar.org/schema/r4.0 AUTOSAR_00052.xsd" 
+        uri="../schema/AUTOSAR_00052.xsd"/>
+</catalog>
