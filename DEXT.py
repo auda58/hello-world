@@ -263,7 +263,20 @@ class DIDEditorWindow(tk.Toplevel):
         self.drag_item = None
 
     def add_signal(self):
-        self.signal_tree.insert('', tk.END, values=['NewSignal', 'uint8', '1'])
+        existing_names = {
+            self.signal_tree.item(child_id, 'values')[0]
+            for child_id in self.signal_tree.get_children()
+        }
+
+        base_name = "NewSignal"
+        new_name = base_name
+        counter = 1
+
+        while new_name in existing_names:
+            new_name = f"{base_name}_{counter}"
+            counter += 1
+
+        self.signal_tree.insert('', tk.END, values=[new_name, 'uint8', '1'])
 
     def delete_signal(self):
         selected = self.signal_tree.selection()
