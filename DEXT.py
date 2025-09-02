@@ -15,8 +15,8 @@ except ImportError:
 # --- Configuration ---
 ARXML_OUTPUT_FILE = 'dext_output.arxml'
 AUTOSAR_NAMESPACE = "http://autosar.org/schema/r4.0"
-XSI_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance"
-SCHEMA_LOCATION = "http://autosar.org/schema/r4.0 AUTOSAR_00053.xsd"
+XSI_NAMESPACE = "https://www.w3.org/2001/XMLSchema-instance"
+SCHEMA_LOCATION = "http://autosar.org/schema/r4.0 AUTOSAR_00052.xsd"
 
 
 class DIDEditorWindow(tk.Toplevel):
