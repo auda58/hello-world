@@ -28,6 +28,7 @@ class DIDEditorWindow(tk.Toplevel):
         self.scale_factor = scale_factor
         self.did_data = did_data if did_data else {}
         self.original_did_name = did_name
+        self.drag_item = None
         self.AUTOSAR_TYPES = [
             'uint8', 'uint16', 'uint32', 'uint64', 'sint8', 'sint16', 'sint32',
             'sint64', 'boolean', 'float32', 'float64', 'string'
@@ -183,6 +184,10 @@ class DIDEditorWindow(tk.Toplevel):
             self.signal_tree.column(col, width=int(100 * self.scale_factor))
         self.signal_tree.pack(fill=tk.BOTH, expand=True)
         self.signal_tree.bind("<Double-1>", self.on_double_click_signal)
+        # Bindings for drag-and-drop reordering
+        self.signal_tree.bind("<ButtonPress-1>", self._on_drag_start)
+        self.signal_tree.bind("<B1-Motion>", self._on_drag_motion)
+        self.signal_tree.bind("<ButtonRelease-1>", self._on_drag_release)
 
         signal_btn_frame = ttk.Frame(signals_frame)
         signal_btn_frame.pack(fill=tk.X, pady=scaled_pad_small)
@@ -239,6 +244,23 @@ class DIDEditorWindow(tk.Toplevel):
         state = tk.NORMAL if self.write_enabled_var.get() else tk.DISABLED
         self.write_session_combo.config(state=state)
         self.write_security_combo.config(state=state)
+
+    def _on_drag_start(self, event):
+        """Records the item being dragged if the click is on a valid row."""
+        self.drag_item = self.signal_tree.identify_row(event.y)
+
+    def _on_drag_motion(self, event):
+        """Moves the dragged item to the current cursor position in the tree."""
+        if not self.drag_item:
+            return
+
+        target_item = self.signal_tree.identify_row(event.y)
+        if target_item and target_item != self.drag_item:
+            self.signal_tree.move(self.drag_item, '', self.signal_tree.index(target_item))
+
+    def _on_drag_release(self, event):
+        """Resets the drag operation."""
+        self.drag_item = None
 
     def add_signal(self):
         self.signal_tree.insert('', tk.END, values=['NewSignal', 'uint8', '1'])
